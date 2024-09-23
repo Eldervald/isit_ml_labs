@@ -1,0 +1,7 @@
+jupyterlab
+numpy
+scipy
+seaborn
+tqdm
+ipywidgets
+networkx
