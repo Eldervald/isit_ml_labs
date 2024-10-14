@@ -1,7 +1,9 @@
-jupyterlab
+ipykernel
 numpy
 scipy
+pandas
 seaborn
 tqdm
 ipywidgets
 networkx
+pytest
