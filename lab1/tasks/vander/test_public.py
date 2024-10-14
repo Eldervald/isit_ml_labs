@@ -10,8 +10,8 @@ from .vander import vander
 
 @dataclasses.dataclass
 class VanderCase:
-    array: npt.NDArray[np.float_ | np.int_]
-    result: npt.NDArray[np.float_]
+    array: npt.NDArray[np.float64 | np.int64]
+    result: npt.NDArray[np.float64]
 
 
 VANDER_TEST_CASES = [

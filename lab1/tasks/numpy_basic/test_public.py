@@ -10,10 +10,10 @@ from .numpy_basic import construct_array, detect_identic, mean_channel, get_uniq
 
 @dataclasses.dataclass
 class ConstructArrayCase:
-    matrix: npt.NDArray[np.int_]
-    row_indices: npt.NDArray[np.int_] | list[int]
-    col_indices: npt.NDArray[np.int_] | list[int]
-    result: npt.NDArray[np.int_]
+    matrix: npt.NDArray[np.int64]
+    row_indices: npt.NDArray[np.int64] | list[int]
+    col_indices: npt.NDArray[np.int64] | list[int]
+    result: npt.NDArray[np.int64]
 
 
 CONSTRUCT_ARRAY_TEST_CASES = [
@@ -85,8 +85,8 @@ DETECT_IDENTIC_TEST_CASES = [
 
 @dataclasses.dataclass
 class MeanChannelCase:
-    X: npt.NDArray[np.float_]
-    result: npt.NDArray[np.float_]
+    X: npt.NDArray[np.float64]
+    result: npt.NDArray[np.float64]
 
 
 MEAN_CHANNEL_TEST_CASES = [
@@ -107,8 +107,8 @@ MEAN_CHANNEL_TEST_CASES = [
 
 @dataclasses.dataclass
 class GetUniqueRowsCase:
-    X: npt.NDArray[np.int_]
-    result: npt.NDArray[np.int_]
+    X: npt.NDArray[np.int64]
+    result: npt.NDArray[np.int64]
 
 
 GET_UNIQUE_ROWS_TEST_CASES = [
@@ -123,9 +123,9 @@ GET_UNIQUE_ROWS_TEST_CASES = [
 
 @dataclasses.dataclass
 class ConstructMatrixCase:
-    first_array: npt.NDArray[np.int_]
-    second_array: npt.NDArray[np.int_]
-    result: npt.NDArray[np.int_]
+    first_array: npt.NDArray[np.int64]
+    second_array: npt.NDArray[np.int64]
+    result: npt.NDArray[np.int64]
 
 
 CONSTRUCT_MATRIX_TEST_CASES = [

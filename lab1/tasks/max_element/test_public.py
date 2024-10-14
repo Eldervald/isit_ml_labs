@@ -9,7 +9,7 @@ from .max_element import max_element
 
 @dataclasses.dataclass
 class MaxElementCase:
-    array: npt.NDArray[np.int_]
+    array: npt.NDArray[np.int64]
     result: int | None
 
 
@@ -27,7 +27,7 @@ MAX_ELEMENT_TEST_CASES = [
         result=None
     ),
     MaxElementCase(
-        array=np.zeros(3, dtype=np.int_),
+        array=np.zeros(3, dtype=np.int64),
         result=0
     ),
     MaxElementCase(

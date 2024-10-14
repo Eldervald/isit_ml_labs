@@ -10,8 +10,8 @@ from .replace_nans import replace_nans
 
 @dataclasses.dataclass
 class ReplaceNansCase:
-    matrix: npt.NDArray[np.float_]
-    result: npt.NDArray[np.float_]
+    matrix: npt.NDArray[np.float64]
+    result: npt.NDArray[np.float64]
 
 
 REPLACE_NANS_TEST_CASES = [

@@ -10,8 +10,8 @@ from .add_zeros import add_zeros
 
 @dataclasses.dataclass
 class AddZerosCase:
-    array: npt.NDArray[np.int_]
-    result: npt.NDArray[np.int_]
+    array: npt.NDArray[np.int64]
+    result: npt.NDArray[np.int64]
 
 
 ADD_ZEROS_TEST_CASES = [
@@ -19,8 +19,8 @@ ADD_ZEROS_TEST_CASES = [
         array=np.array([1, 2, 3]),
         result=np.array([1, 0, 2, 0, 3])),
     AddZerosCase(
-        array=np.array([], dtype=np.int_),
-        result=np.array([], dtype=np.int_)),
+        array=np.array([], dtype=np.int64),
+        result=np.array([], dtype=np.int64)),
     AddZerosCase(
         array=np.array([1]),
         result=np.array([1])),
@@ -34,8 +34,8 @@ ADD_ZEROS_TEST_CASES = [
         array=np.array([1, 0, 0, 1]),
         result=np.array([1, 0, 0, 0, 0, 0, 1])),
     AddZerosCase(
-        array=np.zeros(10, dtype=np.int_),
-        result=np.zeros(19, dtype=np.int_)),
+        array=np.zeros(10, dtype=np.int64),
+        result=np.zeros(19, dtype=np.int64)),
 ]
 
 

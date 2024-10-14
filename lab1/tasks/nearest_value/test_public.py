@@ -9,24 +9,24 @@ from .nearest_value import nearest_value
 
 @dataclasses.dataclass
 class NearestValueCase:
-    matrix: npt.NDArray[np.float_]
+    matrix: npt.NDArray[np.float64]
     value: float
     result: float | None
 
 
 NEAREST_VALUE_TEST_CASES = [
     NearestValueCase(
-        matrix=np.arange(0, 10).reshape((2, 5)).astype(np.float_),
+        matrix=np.arange(0, 10).reshape((2, 5)).astype(np.float64),
         value=3.6,
         result=4.
     ),
     NearestValueCase(
-        matrix=np.arange(0, 10).reshape((5, 2)).astype(np.float_),
+        matrix=np.arange(0, 10).reshape((5, 2)).astype(np.float64),
         value=0.3,
         result=0.0
     ),
     NearestValueCase(
-        matrix=np.arange(0, 10).reshape((10, 1)).astype(np.float_),
+        matrix=np.arange(0, 10).reshape((10, 1)).astype(np.float64),
         value=0.6,
         result=1.0
     ),

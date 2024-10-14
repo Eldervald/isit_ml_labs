@@ -3,10 +3,10 @@ import numpy.typing as npt
 
 
 def construct_array(
-        matrix: npt.NDArray[np.int_],
-        row_indices: npt.NDArray[np.int_] | list[int],
-        col_indices: npt.NDArray[np.int_] | list[int]
-) -> npt.NDArray[np.int_]:
+        matrix: npt.NDArray[np.int64],
+        row_indices: npt.NDArray[np.int64] | list[int],
+        col_indices: npt.NDArray[np.int64] | list[int]
+) -> npt.NDArray[np.int64]:
     """
     Construct slice of given matrix by indices row_indices and col_indices:
     [matrix[row_indices[0], col_indices[0]], ... , matrix[row_indices[N-1], col_indices[N-1]]]
@@ -29,7 +29,7 @@ def detect_identic(
     """
 
 
-def mean_channel(X: npt.NDArray[np.float_]) -> npt.NDArray[np.float_]:
+def mean_channel(X: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """
     Given color image (3-dimensional vector of size (n, m, 3).
     Compute average value for all 3 channels
@@ -38,7 +38,7 @@ def mean_channel(X: npt.NDArray[np.float_]) -> npt.NDArray[np.float_]:
     """
 
 
-def get_unique_rows(X: npt.NDArray[np.int_]) -> npt.NDArray[np.int_]:
+def get_unique_rows(X: npt.NDArray[np.int64]) -> npt.NDArray[np.int64]:
     """
     Compute unique rows of matrix
     :param X: matrix
@@ -47,8 +47,8 @@ def get_unique_rows(X: npt.NDArray[np.int_]) -> npt.NDArray[np.int_]:
 
 
 def construct_matrix(
-        first_array: npt.NDArray[np.int_], second_array: npt.NDArray[np.int_]
-) -> npt.NDArray[np.int_]:
+        first_array: npt.NDArray[np.int64], second_array: npt.NDArray[np.int64]
+) -> npt.NDArray[np.int64]:
     """
     Construct matrix from pair of arrays
     :param first_array: first array

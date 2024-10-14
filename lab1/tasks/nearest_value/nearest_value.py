@@ -2,7 +2,7 @@ import numpy as np
 import numpy.typing as npt
 
 
-def nearest_value(matrix: npt.NDArray[np.float_], value: float) -> float | None:
+def nearest_value(matrix: npt.NDArray[np.float64], value: float) -> float | None:
     """
     Find nearest value in matrix.
     If matrix is empty return None

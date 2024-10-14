@@ -10,7 +10,7 @@ from .nonzero_product import nonzero_product
 
 @dataclasses.dataclass
 class NonzeroProductCase:
-    matrix: npt.NDArray[np.int_]
+    matrix: npt.NDArray[np.int64]
     result: tp.Any
 
 
@@ -32,11 +32,11 @@ NONZERO_PRODUCT_TEST_CASES = [
         result=2058
     ),
     NonzeroProductCase(
-        matrix=np.ones(48, dtype=np.int_).reshape((12, 4)),
+        matrix=np.ones(48, dtype=np.int64).reshape((12, 4)),
         result=1
     ),
     NonzeroProductCase(
-        matrix=np.zeros(48, dtype=np.int_).reshape((12, 4)),
+        matrix=np.zeros(48, dtype=np.int64).reshape((12, 4)),
         result=None
     ),
     NonzeroProductCase(
