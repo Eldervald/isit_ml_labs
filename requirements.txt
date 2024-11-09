@@ -1,6 +1,7 @@
 ipykernel
 numpy
 scipy
+scikit-learn
 pandas
 seaborn
 tqdm
