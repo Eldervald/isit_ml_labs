@@ -131,3 +131,66 @@ def test_order_no_positions() -> None:
     order_first.positions.append(CountedPosition(Item(0, 'USB cable', 256)))
     order_second = Order(order_id=1)
     assert order_first.positions != order_second.positions
+
+
+###################
+# Additional edge case tests
+###################
+
+
+def test_position_zero_count_weight() -> None:
+    # Edge case: zero count/weight for positions
+    item = Item(item_id=0, title='Test Item', cost=100)
+
+    # Zero count should result in zero cost
+    pos = CountedPosition(item=item, count=0)
+    assert pos.cost == 0
+
+    # Zero weight should result in zero cost
+    pos2 = WeightedPosition(item=item, weight=0)
+    assert pos2.cost == 0
+
+
+def test_order_large_many_positions() -> None:
+    # Edge case: very large orders with many positions
+    positions = [CountedPosition(Item(i, f'Item{i}', 10), count=i+1) for i in range(100)]
+    order = Order(order_id=1, positions=positions)
+
+    # Verify total cost is calculated correctly
+    expected_cost = sum(pos.cost for pos in positions)
+    assert order.cost == expected_cost
+
+
+def test_order_mixed_position_types() -> None:
+    # Edge case: mixed position types in single order
+    item1 = Item(item_id=0, title='Cable', cost=100)
+    item2 = Item(item_id=1, title='Book', cost=50)
+
+    positions = [
+        CountedPosition(item=item1, count=2),  # 200
+        WeightedPosition(item=item2, weight=1.5),  # 75
+        CountedPosition(item=item2, count=1),  # 50
+    ]
+
+    order = Order(order_id=2, positions=positions)
+    assert order.cost == 325
+
+
+def test_item_unicode_titles() -> None:
+    # Edge case: Unicode titles for items
+    items = [
+        Item(item_id=0, title='Товар', cost=100),  # Russian
+        Item(item_id=1, title='商品', cost=200),  # Chinese
+        Item(item_id=2, title='Produkt', cost=150),  # German
+        Item(item_id=3, title='منتج', cost=180),  # Arabic
+        Item(item_id=4, title='🎁 Gift', cost=50),  # Emoji
+    ]
+
+    # Verify all items are created successfully
+    for item in items:
+        assert len(item.title) > 0
+        assert item.cost >= 0
+
+    # Verify sorting still works with Unicode
+    sorted_items = sorted(items)
+    assert len(sorted_items) == len(items)

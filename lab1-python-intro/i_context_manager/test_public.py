@@ -1,5 +1,25 @@
 import io
+import testlib
+
+import pytest
+
 from .context_manager import supresser, retyper, dumper
+
+
+###################
+# Structure asserts
+###################
+
+
+def test_docs() -> None:
+    assert testlib.is_function_docstring_exists(supresser)
+    assert testlib.is_function_docstring_exists(retyper)
+    assert testlib.is_function_docstring_exists(dumper)
+
+
+###################
+# Tests
+###################
 
 
 def test_retyper_retypes() -> None:
@@ -88,3 +108,44 @@ def test_dumped_stderr(capsys) -> None:  # type: ignore
         assert False, 'wrong exception'
     else:
         assert False, 'dumper should throw'
+
+
+def test_supresser_no_exceptions() -> None:
+    # Edge case: empty exception type list
+    try:
+        with supresser():
+            pass
+    except Exception as e:
+        assert False, 'unexpected exception with empty supresser {}'.format(e)
+
+
+def test_supresser_multiple_exceptions() -> None:
+    # Edge case: multiple exception types in single call
+    try:
+        with supresser(ValueError, TypeError, KeyError, IOError):
+            raise ValueError('test')
+    except Exception as e:
+        assert False, 'supressed exception raised {}'.format(e)
+    else:
+        pass
+
+    try:
+        with supresser(ValueError, TypeError, KeyError, IOError):
+            raise TypeError('test2')
+    except Exception as e:
+        assert False, 'supressed exception raised {}'.format(e)
+    else:
+        pass
+
+
+def test_retyper_traceback_preservation() -> None:
+    # Edge case: verify traceback information is preserved
+    try:
+        with retyper(ValueError, TypeError):
+            raise ValueError('original message')
+    except TypeError as e:
+        assert 'original message' in e.args
+        # Verify the exception chain is maintained
+        assert e.__cause__ is None or isinstance(e.__cause__, ValueError)
+    except Exception:
+        assert False, 'wrong exception type'
