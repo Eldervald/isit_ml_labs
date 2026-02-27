@@ -465,6 +465,20 @@ wheels = [
 ]
 
 [[package]]
+name = "ipytest"
+version = "0.14.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "ipython" },
+    { name = "packaging" },
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c2/2e/f54f63c0423c025c81874d4e83220f357bd6408cf985beb59151dc6bf81b/ipytest-0.14.2.tar.gz", hash = "sha256:936ab65044e1f9365a8be3f0f1f4b4c086bad44da65844934ea99701413f17d6", size = 19383, upload-time = "2024-04-21T15:58:17.825Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2b/f3/d86f2aaf3c5187a323be202c71b3856d9cc9587a6f44d432159ae1b25988/ipytest-0.14.2-py3-none-any.whl", hash = "sha256:236b2d41ad0943310f5a9b7a7d03a627e6abd3ceb481b13fcd03d17292fd69b2", size = 18327, upload-time = "2024-04-21T15:57:55.16Z" },
+]
+
+[[package]]
 name = "ipython"
 version = "8.32.0"
 source = { registry = "https://pypi.org/simple" }
@@ -507,6 +521,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "graphviz" },
     { name = "ipykernel" },
+    { name = "ipytest" },
     { name = "ipywidgets" },
     { name = "jupyterlab" },
     { name = "mypy" },
@@ -524,6 +539,7 @@ dependencies = [
 requires-dist = [
     { name = "graphviz", specifier = ">=0.20.3" },
     { name = "ipykernel", specifier = ">=6.29.5" },
+    { name = "ipytest", specifier = ">=0.14.2" },
     { name = "ipywidgets", specifier = ">=8.1.5" },
     { name = "jupyterlab", specifier = ">=4.3.5" },
     { name = "mypy", specifier = ">=1.19.1" },

@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "graphviz>=0.20.3",
     "ipykernel>=6.29.5",
+    "ipytest>=0.14.2",
     "ipywidgets>=8.1.5",
     "jupyterlab>=4.3.5",
     "mypy>=1.19.1",
