@@ -1,9 +1,12 @@
 import io
+import os
+import sys
 import testlib
+import time
 
 import pytest
 
-from .context_manager import supresser, retyper, dumper
+from .context_manager import Timer, FileManager, OutputCapture
 
 
 ###################
@@ -12,140 +15,178 @@ from .context_manager import supresser, retyper, dumper
 
 
 def test_docs() -> None:
-    assert testlib.is_function_docstring_exists(supresser)
-    assert testlib.is_function_docstring_exists(retyper)
-    assert testlib.is_function_docstring_exists(dumper)
+    assert testlib.is_function_docstring_exists(Timer)
+    assert testlib.is_function_docstring_exists(FileManager)
+    assert testlib.is_function_docstring_exists(OutputCapture)
 
 
 ###################
-# Tests
+# Timer tests
 ###################
 
 
-def test_retyper_retypes() -> None:
+def test_timer_basic() -> None:
+    with Timer() as timer:
+        time.sleep(0.01)
+    assert timer.elapsed >= 0.01
+
+
+def test_timer_elapsed_accessible() -> None:
+    timer = Timer()
+    with timer:
+        time.sleep(0.005)
+    elapsed = timer.elapsed
+    assert elapsed >= 0.005
+    assert elapsed < 1.0  # Should not be too long
+
+
+def test_timer_returns_self() -> None:
+    with Timer() as timer:
+        assert isinstance(timer, Timer)
+        assert hasattr(timer, '_start_time')
+
+
+###################
+# FileManager tests
+###################
+
+
+def test_file_manager_basic() -> None:
+    filename = 'test_temp.txt'
     try:
-        with retyper(ValueError, TypeError):
-            raise ValueError('penguin')
+        with FileManager(filename, 'w') as f:
+            f.write('Hello, World!')
+
+        with FileManager(filename, 'r') as f:
+            content = f.read()
+        assert content == 'Hello, World!'
+    finally:
+        if os.path.exists(filename):
+            os.remove(filename)
+
+
+def test_file_manager_closes_on_exit() -> None:
+    filename = 'test_temp2.txt'
+    try:
+        with FileManager(filename, 'w') as f:
+            f.write('test')
+        assert f.closed
+    finally:
+        if os.path.exists(filename):
+            os.remove(filename)
+
+
+def test_file_manager_closes_on_exception() -> None:
+    filename = 'test_temp3.txt'
+    try:
+        with FileManager(filename, 'w') as f:
+            f.write('test')
+            raise ValueError('test exception')
     except ValueError:
-        assert False, 'source error was raised'
-    except TypeError as e:
-        assert 'penguin' in e.args, 'attribute args lost'
-    except Exception as e:
-        assert False, 'totally wrong exception type {}'.format(e)
-    else:
-        assert False, 'retyper should throw'
-
-
-def test_retyper_idles() -> None:
-    try:
-        with retyper(ValueError, TypeError):
-            raise IOError
-    except (ValueError, TypeError):
-        assert False, 'wrong exception type'
-    except IOError:
-        assert True
-    except Exception:
-        assert False, 'wrong exception type'
-    else:
-        assert False, 'retyper should throw'
-
-
-def test_nested_retypers() -> None:
-    try:
-        with retyper(TypeError, IOError), retyper(ValueError, TypeError):
-            raise ValueError('lalala', 1)
-    except IOError as e:
-        assert e.args == ('lalala', 1)
-    else:
-        assert False, 'wrong exception type in nested manager'
-
-
-def test_supresser_idles() -> None:
-    try:
-        with supresser(ValueError, TypeError):
-            raise IOError
-    except IOError:
-        assert True
-    except Exception as e:
-        assert False, 'wrong exception type {}'.format(e)
-    else:
-        assert False, 'no exception'
-
-
-def test_supresser_supress() -> None:
-    try:
-        with supresser(ValueError, TypeError):
-            raise ValueError('message')
-    except Exception as e:
-        assert False, 'supressed exception raised {}'.format(e)
-    else:
         pass
+    assert f.closed
+    if os.path.exists(filename):
+        os.remove(filename)
 
 
-def test_dumper_stream() -> None:
-    stream = io.StringIO()
-    msg = 'message to log'
+def test_file_manager_read_write() -> None:
+    filename = 'test_temp4.txt'
     try:
-        with dumper(stream):
-            raise ValueError(msg)
-    except ValueError:
-        assert msg in stream.getvalue()
-    except Exception:
-        assert False, 'wrong exception'
-    else:
-        assert False, 'dumper should throw'
+        # Write multiple lines
+        with FileManager(filename, 'w') as f:
+            f.write('Line 1\n')
+            f.write('Line 2\n')
+
+        # Read back
+        with FileManager(filename, 'r') as f:
+            lines = f.readlines()
+        assert lines == ['Line 1\n', 'Line 2\n']
+    finally:
+        if os.path.exists(filename):
+            os.remove(filename)
 
 
-def test_dumped_stderr(capsys) -> None:  # type: ignore
-    msg = 'message to log'
-    try:
-        with dumper():
-            raise ValueError(msg)
-    except ValueError:
-        captured = capsys.readouterr()
-        assert msg in captured.err
-    except Exception:
-        assert False, 'wrong exception'
-    else:
-        assert False, 'dumper should throw'
+###################
+# OutputCapture tests
+###################
 
 
-def test_supresser_no_exceptions() -> None:
-    # Edge case: empty exception type list
-    try:
-        with supresser():
-            pass
-    except Exception as e:
-        assert False, 'unexpected exception with empty supresser {}'.format(e)
+def test_output_capture_stdout() -> None:
+    with OutputCapture() as captured:
+        print('Hello')
+        print('World')
+    assert 'Hello' in captured.stdout
+    assert 'World' in captured.stdout
 
 
-def test_supresser_multiple_exceptions() -> None:
-    # Edge case: multiple exception types in single call
-    try:
-        with supresser(ValueError, TypeError, KeyError, IOError):
-            raise ValueError('test')
-    except Exception as e:
-        assert False, 'supressed exception raised {}'.format(e)
-    else:
+def test_output_capture_stderr() -> None:
+    with OutputCapture() as captured:
+        print('Error message', file=sys.stderr)
+    assert 'Error message' in captured.stderr
+
+
+def test_output_capture_restores_streams() -> None:
+    original_stdout = sys.stdout
+    original_stderr = sys.stderr
+
+    with OutputCapture() as captured:
+        print('test')
+
+    assert sys.stdout is original_stdout
+    assert sys.stderr is original_stderr
+    # Also check that output was actually captured
+    assert 'test' in captured.stdout
+
+
+def test_output_capture_both_streams() -> None:
+    with OutputCapture() as captured:
+        print('stdout message')
+        print('stderr message', file=sys.stderr)
+
+    assert 'stdout message' in captured.stdout
+    assert 'stderr message' in captured.stderr
+    assert 'stderr message' not in captured.stdout
+
+
+def test_output_capture_empty() -> None:
+    with OutputCapture() as captured:
         pass
+    assert captured.stdout == ''
+    assert captured.stderr == ''
 
-    try:
-        with supresser(ValueError, TypeError, KeyError, IOError):
-            raise TypeError('test2')
-    except Exception as e:
-        assert False, 'supressed exception raised {}'.format(e)
-    else:
+
+###################
+# Edge cases
+###################
+
+
+def test_timer_no_operation() -> None:
+    with Timer() as timer:
         pass
+    assert timer.elapsed >= 0
 
 
-def test_retyper_traceback_preservation() -> None:
-    # Edge case: verify traceback information is preserved
+def test_file_manager_default_mode() -> None:
+    filename = 'test_temp5.txt'
     try:
-        with retyper(ValueError, TypeError):
-            raise ValueError('original message')
-    except TypeError as e:
-        assert 'original message' in e.args
-        # Verify the exception chain is maintained
-        assert e.__cause__ is None or isinstance(e.__cause__, ValueError)
-    except Exception:
-        assert False, 'wrong exception type'
+        # Create file first
+        with FileManager(filename, 'w') as f:
+            f.write('test')
+
+        # Open with default mode (read)
+        with FileManager(filename) as f:
+            content = f.read()
+        assert content == 'test'
+    finally:
+        if os.path.exists(filename):
+            os.remove(filename)
+
+
+def test_output_capture_nested() -> None:
+    with OutputCapture() as outer:
+        print('outer')
+        with OutputCapture() as inner:
+            print('inner')
+        assert 'inner' in inner.stdout
+        assert 'outer' not in inner.stdout
+    assert 'outer' in outer.stdout
